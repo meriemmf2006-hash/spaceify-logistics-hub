@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHero, Listings } from "@/components/site/Sections";
 
-export const Route = createFileRoute("/spaces")({
+export const Route = createFileRoute("/spaces/")({
   head: () => ({
     meta: [
       { title: "المساحات والتخزين | Spaceify" },
