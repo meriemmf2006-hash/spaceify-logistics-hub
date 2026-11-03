@@ -11,9 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LocalRouteImport } from './routes/local'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as PartnersRouteImport } from './routes/partners'
-import { Route as SpacesRouteImport } from './routes/spaces'
 import { Route as TrucksRouteImport } from './routes/trucks'
+import { Route as SpacesIndexRouteImport } from './routes/spaces.index'
+import { Route as SpacesIdRouteImport } from './routes/spaces.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -25,14 +27,14 @@ const LocalRoute = LocalRouteImport.update({
   path: '/local',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PartnersRoute = PartnersRouteImport.update({
   id: '/partners',
   path: '/partners',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SpacesRoute = SpacesRouteImport.update({
-  id: '/spaces',
-  path: '/spaces',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TrucksRoute = TrucksRouteImport.update({
@@ -40,43 +42,83 @@ const TrucksRoute = TrucksRouteImport.update({
   path: '/trucks',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SpacesIndexRoute = SpacesIndexRouteImport.update({
+  id: '/spaces/',
+  path: '/spaces/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SpacesIdRoute = SpacesIdRouteImport.update({
+  id: '/spaces/$id',
+  path: '/spaces/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/local': typeof LocalRoute
+  '/notifications': typeof NotificationsRoute
   '/partners': typeof PartnersRoute
-  '/spaces': typeof SpacesRoute
   '/trucks': typeof TrucksRoute
+  '/spaces/$id': typeof SpacesIdRoute
+  '/spaces/': typeof SpacesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/local': typeof LocalRoute
+  '/notifications': typeof NotificationsRoute
   '/partners': typeof PartnersRoute
-  '/spaces': typeof SpacesRoute
   '/trucks': typeof TrucksRoute
+  '/spaces/$id': typeof SpacesIdRoute
+  '/spaces': typeof SpacesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/local': typeof LocalRoute
+  '/notifications': typeof NotificationsRoute
   '/partners': typeof PartnersRoute
-  '/spaces': typeof SpacesRoute
   '/trucks': typeof TrucksRoute
+  '/spaces/$id': typeof SpacesIdRoute
+  '/spaces/': typeof SpacesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/local' | '/partners' | '/spaces' | '/trucks'
+  fullPaths:
+    | '/'
+    | '/local'
+    | '/notifications'
+    | '/partners'
+    | '/trucks'
+    | '/spaces/$id'
+    | '/spaces/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/local' | '/partners' | '/spaces' | '/trucks'
-  id: '__root__' | '/' | '/local' | '/partners' | '/spaces' | '/trucks'
+  to:
+    | '/'
+    | '/local'
+    | '/notifications'
+    | '/partners'
+    | '/trucks'
+    | '/spaces/$id'
+    | '/spaces'
+  id:
+    | '__root__'
+    | '/'
+    | '/local'
+    | '/notifications'
+    | '/partners'
+    | '/trucks'
+    | '/spaces/$id'
+    | '/spaces/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LocalRoute: typeof LocalRoute
+  NotificationsRoute: typeof NotificationsRoute
   PartnersRoute: typeof PartnersRoute
-  SpacesRoute: typeof SpacesRoute
   TrucksRoute: typeof TrucksRoute
+  SpacesIdRoute: typeof SpacesIdRoute
+  SpacesIndexRoute: typeof SpacesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -95,18 +137,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocalRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/partners': {
       id: '/partners'
       path: '/partners'
       fullPath: '/partners'
       preLoaderRoute: typeof PartnersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/spaces': {
-      id: '/spaces'
-      path: '/spaces'
-      fullPath: '/spaces'
-      preLoaderRoute: typeof SpacesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/trucks': {
@@ -116,15 +158,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrucksRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/spaces/': {
+      id: '/spaces/'
+      path: '/spaces'
+      fullPath: '/spaces/'
+      preLoaderRoute: typeof SpacesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/spaces/$id': {
+      id: '/spaces/$id'
+      path: '/spaces/$id'
+      fullPath: '/spaces/$id'
+      preLoaderRoute: typeof SpacesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LocalRoute: LocalRoute,
+  NotificationsRoute: NotificationsRoute,
   PartnersRoute: PartnersRoute,
-  SpacesRoute: SpacesRoute,
   TrucksRoute: TrucksRoute,
+  SpacesIdRoute: SpacesIdRoute,
+  SpacesIndexRoute: SpacesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

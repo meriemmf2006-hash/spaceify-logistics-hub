@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X, Plus } from "lucide-react";
+import { Menu, X, Plus, Bell } from "lucide-react";
+import { useNotifications } from "@/lib/notifications";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/spaceify-logo.png.asset.json";
 
@@ -26,6 +27,17 @@ export function Logo() {
   );
 }
 
+function BellLink() {
+  const { list } = useNotifications();
+  const n = list.filter((x) => !x.read).length;
+  return (
+    <Link to="/notifications" aria-label="الإشعارات" className="relative rounded-full p-2 text-primary hover:bg-secondary">
+      <Bell className="size-5" />
+      {n > 0 && <span className="absolute -end-0.5 -top-0.5 grid size-5 place-items-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">{n}</span>}
+    </Link>
+  );
+}
+
 export function Header() {
   const [open, setOpen] = useState(false);
   return (
@@ -46,12 +58,14 @@ export function Header() {
           ))}
         </nav>
         <div className="hidden items-center gap-2 lg:flex">
+          <BellLink />
           <Button variant="brandOutline" size="sm"><Plus />إضافة عرض (مساحة / مركبة)</Button>
           <Button variant="accent" size="sm">تسجيل الدخول</Button>
         </div>
-        <button className="rounded-lg p-2 text-primary lg:hidden" onClick={() => setOpen(!open)} aria-label="القائمة">
+        <div className="flex items-center gap-1 lg:hidden"><BellLink />
+        <button className="rounded-lg p-2 text-primary" onClick={() => setOpen(!open)} aria-label="القائمة">
           {open ? <X /> : <Menu />}
-        </button>
+        </button></div>
       </div>
       {open && (
         <div className="border-t px-4 pb-4 lg:hidden">
