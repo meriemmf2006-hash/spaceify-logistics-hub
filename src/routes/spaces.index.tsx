@@ -1,8 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { MapPin, Ruler, Star, Plus } from "lucide-react";
+import { lazy, Suspense, useMemo } from "react";
+import { ClientOnly } from "@tanstack/react-router";
+import { toast } from "sonner";
+import { MapPin, Ruler, Star, Plus, LocateFixed, Navigation } from "lucide-react";
+import { distanceKm, useUserLocation } from "@/lib/geo";
 import { PageHero } from "@/components/site/Sections";
 import { Button } from "@/components/ui/button";
-import { useAllSpaces, statusLabels } from "@/lib/spaces";
+import { useAllSpaces, statusLabels, spacePos } from "@/lib/spaces";
+
+const SpacesMap = lazy(() => import("@/components/site/SpacesMap"));
 
 export const Route = createFileRoute("/spaces/")({
   head: () => ({
@@ -19,13 +25,34 @@ export const Route = createFileRoute("/spaces/")({
 });
 
 function SpacesPage() {
-  const { all } = useAllSpaces();
+  const { all: raw } = useAllSpaces();
+  const { pos, status, locate } = useUserLocation();
+  const all = useMemo(() => {
+    const withD = raw.map((s) => ({ ...s, km: pos ? distanceKm(pos, spacePos(s)) : null }));
+    return pos ? withD.sort((a, b) => a.km! - b.km!) : withD;
+  }, [raw, pos]);
+  const pins = useMemo(() => all.map((s) => ({ id: s.id, title: s.title, pos: spacePos(s), label: `${Math.round(s.pricePerMonth / 1000)}k` })), [all]);
+  const findNearest = async () => {
+    const p = await locate();
+    if (p) toast.success("تم تحديد موقعك، رُتّبت المساحات من الأقرب إلى الأبعد");
+    else toast.error("تعذّر تحديد موقعك. يرجى السماح للمتصفح بالوصول إلى الموقع الجغرافي.");
+  };
   return (
     <>
       <PageHero title="🏢 خزّن بضائعك بأمان" desc="استأجر المستودعات والمرائب وغرف التخزين للمدة التي تناسبك، يومياً أو شهرياً." />
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 pt-10">
         <h2 className="text-xl font-black text-primary">المساحات المتاحة ({all.length})</h2>
-        <Button asChild variant="brand"><Link to="/spaces/new"><Plus />أضف مساحتك</Link></Button>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="brandOutline" onClick={findNearest} disabled={status === "loading"}>
+            <LocateFixed />{status === "loading" ? "جارٍ تحديد موقعك..." : pos ? "تحديث موقعي" : "المساحات الأقرب إليّ"}
+          </Button>
+          <Button asChild variant="brand"><Link to="/spaces/new"><Plus />أضف مساحتك</Link></Button>
+        </div>
+      </div>
+      <div className="mx-auto max-w-7xl px-4 pt-6">
+        <ClientOnly fallback={<div className="h-80 rounded-3xl bg-muted sm:h-96" />}>
+          <Suspense fallback={<div className="h-80 rounded-3xl bg-muted sm:h-96" />}><SpacesMap pins={pins} user={pos} /></Suspense>
+        </ClientOnly>
       </div>
       <section className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:grid-cols-2 lg:grid-cols-3">
         {all.map((s) => (
@@ -44,6 +71,7 @@ function SpacesPage() {
               <div className="mt-2 flex flex-wrap gap-3 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1"><MapPin className="size-4 text-accent" />{s.wilaya}{s.region ? ` - ${s.region}` : ""}</span>
                 <span className="flex items-center gap-1"><Ruler className="size-4 text-accent" />{s.area} م²</span>
+                {s.km != null && <span className="flex items-center gap-1 font-bold text-primary"><Navigation className="size-4 text-accent" />{s.km < 1 ? "أقل من 1" : Math.round(s.km)} كم</span>}
                 {!s.userAdded && <span className="flex items-center gap-1"><Star className="size-4 text-accent" />{s.rating}</span>}
               </div>
               <p className="mt-3 font-black text-accent">{s.pricePerMonth.toLocaleString("fr-DZ")} دج / الشهر</p>

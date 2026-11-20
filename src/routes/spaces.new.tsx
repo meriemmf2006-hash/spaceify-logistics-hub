@@ -2,7 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
-import { ImagePlus, X, Send, ArrowRight } from "lucide-react";
+import { ImagePlus, X, Send, ArrowRight, LocateFixed } from "lucide-react";
+import { nearestWilaya, useUserLocation } from "@/lib/geo";
 import { Button } from "@/components/ui/button";
 import { addUserSpace, defaultImageForType, spaceTypes, type Space } from "@/lib/spaces";
 import { addNotification } from "@/lib/notifications";
@@ -63,6 +64,14 @@ function NewSpacePage() {
   const [features, setFeatures] = useState<string[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [done, setDone] = useState<Space | null>(null);
+  const [wilaya, setWilaya] = useState(wilayas[0]!);
+  const { pos, status, locate } = useUserLocation();
+  const useMyLocation = async () => {
+    const p = await locate();
+    if (!p) return toast.error("تعذّر تحديد الموقع. يرجى السماح للمتصفح بالوصول إلى الموقع الجغرافي.");
+    setWilaya(nearestWilaya(p));
+    toast.success("تم تحديد موقع المساحة بدقة على الخريطة");
+  };
 
   const onFiles = async (files: FileList | null) => {
     if (!files) return;
@@ -91,6 +100,7 @@ function NewSpacePage() {
       images: images.length ? images : [defaultImageForType[d.type]!],
       description: d.description, features, owner: "أنت", rating: 5,
       phone: d.phone, status: "review", userAdded: true,
+      ...(pos ? { lat: pos.lat, lng: pos.lng } : {}),
     };
     try { addUserSpace(space); } catch {
       toast.error("تعذّر حفظ الصور لكبر حجمها، يرجى رفع صور أقل");
@@ -102,7 +112,7 @@ function NewSpacePage() {
   };
 
   if (done) {
-    const msg = `مرحباً فريق Spaceify 👋\nأودّ تأكيد إضافة مساحة جديدة:\n\n🏢 العنوان: ${done.title}\n📦 النوع: ${done.type}\n📍 الموقع: ${done.wilaya} - ${done.region}\n📐 المساحة: ${done.area} م²\n💰 السعر: ${done.pricePerDay.toLocaleString("fr-DZ")} دج/اليوم - ${done.pricePerMonth.toLocaleString("fr-DZ")} دج/الشهر\n🛡️ التجهيزات: ${done.features.join("، ") || "—"}\n📞 الهاتف: ${done.phone}\n\nالرقم المرجعي: ${done.id}`;
+    const msg = `مرحباً فريق Spaceify 👋\nأودّ تأكيد إضافة مساحة جديدة:\n\n🏢 العنوان: ${done.title}\n📦 النوع: ${done.type}\n📍 الموقع: ${done.wilaya} - ${done.region}\n📐 المساحة: ${done.area} م²\n💰 السعر: ${done.pricePerDay.toLocaleString("fr-DZ")} دج/اليوم - ${done.pricePerMonth.toLocaleString("fr-DZ")} دج/الشهر\n🛡️ التجهيزات: ${done.features.join("، ") || "—"}\n📞 الهاتف: ${done.phone}${done.lat != null ? `\n🗺️ الموقع على الخريطة: https://maps.google.com/?q=${done.lat},${done.lng}` : ""}\n\nالرقم المرجعي: ${done.id}`;
     return (
       <div className="mx-auto max-w-xl px-4 py-16 text-center">
         <div className="glass rounded-3xl p-8">
@@ -131,8 +141,16 @@ function NewSpacePage() {
       <form onSubmit={submit} noValidate className="glass mt-6 grid gap-4 rounded-3xl p-5 sm:grid-cols-2 sm:p-7">
         <label className={`${lbl} sm:col-span-2`}>عنوان المساحة<input name="title" className={field} placeholder="مثال: مستودع مغطى 200 م² قرب الطريق السريع" />{err("title")}</label>
         <label className={lbl}>نوع المساحة<select name="type" className={field}>{spaceTypes.map((t) => <option key={t}>{t}</option>)}</select></label>
-        <label className={lbl}>الولاية<select name="wilaya" className={field}>{wilayas.map((w) => <option key={w}>{w}</option>)}</select></label>
+        <label className={lbl}>الولاية<select name="wilaya" value={wilaya} onChange={(e) => setWilaya(e.target.value)} className={field}>{wilayas.map((w) => <option key={w}>{w}</option>)}</select></label>
         <label className={lbl}>المنطقة / البلدية<input name="region" className={field} placeholder="مثال: الرويبة" />{err("region")}</label>
+        <div className="sm:col-span-2 rounded-xl border border-dashed p-3">
+          <Button type="button" variant="brandOutline" size="sm" onClick={useMyLocation} disabled={status === "loading"}>
+            <LocateFixed />{status === "loading" ? "جارٍ تحديد الموقع..." : "حدّد الموقع الحالي عبر GPS"}
+          </Button>
+          <p className="mt-2 text-xs text-muted-foreground">
+            {pos ? <>✅ تم حفظ الإحداثيات: <span dir="ltr">{pos.lat.toFixed(5)}, {pos.lng.toFixed(5)}</span></> : "اختياري: إذا كنت داخل المساحة الآن، حدّد موقعها ليظهر بدقة على خرائط Google."}
+          </p>
+        </div>
         <label className={lbl}>المساحة (م²)<input name="area" type="number" min={1} className={field} placeholder="120" />{err("area")}</label>
         <label className={lbl}>السعر (دج)<input name="price" type="number" min={0} className={field} placeholder="35000" />{err("price")}</label>
         <label className={lbl}>وحدة السعر<select name="priceUnit" className={field}><option value="month">شهرياً</option><option value="day">يومياً</option></select></label>

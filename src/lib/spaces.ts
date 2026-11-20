@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { wilayaCoords, type LatLng } from "./geo";
 import warehouse from "@/assets/space-warehouse.jpg";
 import garage from "@/assets/space-garage.jpg";
 import room from "@/assets/space-room.jpg";
@@ -21,7 +22,13 @@ export type Space = {
   phone?: string;
   status: "available" | "review";
   userAdded?: boolean;
+  lat?: number;
+  lng?: number;
 };
+
+export function spacePos(s: Space): LatLng {
+  return s.lat != null && s.lng != null ? { lat: s.lat, lng: s.lng } : wilayaCoords[s.wilaya] ?? { lat: 36.75, lng: 3.06 };
+}
 
 export const statusLabels = { available: "متاحة", review: "قيد المراجعة" } as const;
 export const spaceTypes = ["مستودع", "غرفة تخزين", "مرآب", "مساحة لوجستية"] as const;

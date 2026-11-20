@@ -4,7 +4,8 @@ import { toast } from "sonner";
 import { MapPin, Ruler, Star, Check, ShieldCheck, CreditCard, Lock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { spaces, computeBooking, useAllSpaces, statusLabels, type Space } from "@/lib/spaces";
+import { spaces, computeBooking, useAllSpaces, statusLabels, spacePos, type Space } from "@/lib/spaces";
+import { directionsUrl } from "@/lib/geo";
 import { PLATFORM_WHATSAPP, waLink } from "@/lib/whatsapp";
 import { addNotification } from "@/lib/notifications";
 
@@ -51,7 +52,7 @@ function SpaceDetail({ space }: { space: Space }) {
   const { rent, fee, total } = computeBooking(space, mode, qty);
 
   const contactPhone = space.phone ?? PLATFORM_WHATSAPP;
-  const waMsg = (booking: boolean) => `مرحباً 👋\n${booking ? "أرغب في حجز المساحة التالية عبر منصة Spaceify:" : "أتواصل معكم بخصوص المساحة التالية على منصة Spaceify:"}\n\n🏢 ${space.title}\n📦 النوع: ${space.type}\n📍 الموقع: ${space.wilaya}${space.region ? " - " + space.region : ""}\n📐 المساحة: ${space.area} م²${booking ? `\n🗓️ المدة: ${qty} ${mode === "day" ? "يوم" : "شهر"}\n💰 الإيجار: ${fmt(rent)} دج\n🧾 رسوم الخدمة: ${fmt(fee)} دج${paid ? " (مدفوعة ✅)" : ""}` : ""}\n\nرقم المساحة: ${space.id}`;
+  const waMsg = (booking: boolean) => `مرحباً 👋\n${booking ? "أرغب في حجز المساحة التالية عبر منصة Spaceify:" : "أتواصل معكم بخصوص المساحة التالية على منصة Spaceify:"}\n\n🏢 ${space.title}\n📦 النوع: ${space.type}\n📍 الموقع: ${space.wilaya}${space.region ? " - " + space.region : ""}\n📐 المساحة: ${space.area} م²${booking ? `\n🗓️ المدة: ${qty} ${mode === "day" ? "يوم" : "شهر"}\n💰 الإيجار: ${fmt(rent)} دج\n🧾 رسوم الخدمة: ${fmt(fee)} دج${paid ? " (مدفوعة ✅)" : ""}` : ""}\n🗺️ الموقع: https://maps.google.com/?q=${spacePos(space).lat},${spacePos(space).lng}\n\nرقم المساحة: ${space.id}`;
 
   const pay = (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,6 +93,7 @@ function SpaceDetail({ space }: { space: Space }) {
             <span>المؤجر: {space.owner}</span>
           </div>
           <p className="mt-5 leading-8">{space.description}</p>
+          <SpaceLocation space={space} />
           <h2 className="mt-6 font-black text-primary">التجهيزات والأمان</h2>
           <ul className="mt-3 grid grid-cols-2 gap-2">
             {space.features.map((f) => (
@@ -170,6 +172,26 @@ function SpaceDetail({ space }: { space: Space }) {
           </form>
         </DialogContent>
       </Dialog>
+    </div>
+  );
+}
+
+function SpaceLocation({ space }: { space: Space }) {
+  const p = spacePos(space);
+  const exact = space.lat != null;
+  const key = import.meta.env["VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY"];
+  return (
+    <div className="mt-6">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="font-black text-primary">الموقع على الخريطة</h2>
+        <a href={directionsUrl(p)} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-accent">🧭 احصل على الاتجاهات</a>
+      </div>
+      {key && (
+        <iframe title="موقع المساحة" loading="lazy" referrerPolicy="no-referrer-when-downgrade"
+          className="mt-3 h-64 w-full rounded-2xl border"
+          src={`https://www.google.com/maps/embed/v1/place?key=${key}&q=${p.lat},${p.lng}&zoom=${exact ? 15 : 11}&language=ar`} />
+      )}
+      {!exact && <p className="mt-2 text-xs text-muted-foreground">يُعرض موقع تقريبي في ولاية {space.wilaya}، ويُرسل العنوان الدقيق بعد تأكيد الحجز.</p>}
     </div>
   );
 }
