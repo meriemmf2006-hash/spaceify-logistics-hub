@@ -68,7 +68,7 @@ function NewSpacePage() {
   const { pos, status, locate } = useUserLocation();
   const useMyLocation = async () => {
     const p = await locate();
-    if (!p) return toast.error("تعذّر تحديد الموقع. يرجى السماح للمتصفح بالوصول إلى الموقع الجغرافي.");
+    if (!p) { toast.error("تعذّر تحديد الموقع. يرجى السماح للمتصفح بالوصول إلى الموقع الجغرافي."); return; }
     setWilaya(nearestWilaya(p));
     toast.success("تم تحديد موقع المساحة بدقة على الخريطة");
   };
