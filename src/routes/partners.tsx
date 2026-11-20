@@ -7,7 +7,7 @@ export const Route = createFileRoute("/partners")({
       { title: "المحلات والشركاء B2B | Spaceify" },
       { name: "description", content: "بوابة محلات الأثاث والأجهزة لطلب سائق توصيل فوري لزبائنهم." },
       { property: "og:title", content: "المحلات والشركاء | Spaceify" },
-      { property: "og:description", content: "توصيل مباشر لمشتريات زبائن المحلات عبر أسطول الهاربين وMaster." },
+      { property: "og:description", content: "توصيل مباشر لمشتريات زبائن المحلات عبر أسطول المركبات النفعية." },
     ],
   }),
   component: () => (<><B2B /><div className="pt-20" /><TechAndBadges /></>),

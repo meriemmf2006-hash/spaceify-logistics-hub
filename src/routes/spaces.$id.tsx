@@ -1,41 +1,46 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { MapPin, Ruler, Star, Check, ShieldCheck, CreditCard, Lock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { spaces, computeBooking } from "@/lib/spaces";
+import { spaces, computeBooking, useAllSpaces, statusLabels, type Space } from "@/lib/spaces";
+import { PLATFORM_WHATSAPP, waLink } from "@/lib/whatsapp";
 import { addNotification } from "@/lib/notifications";
 
 export const Route = createFileRoute("/spaces/$id")({
-  loader: ({ params }) => {
-    const space = spaces.find((s) => s.id === params.id);
-    if (!space) throw notFound();
-    return { space };
+  head: ({ params }) => {
+    const s = spaces.find((x) => x.id === params.id);
+    const title = s ? `${s.title} - ${s.wilaya} | Spaceify` : "تفاصيل المساحة | Spaceify";
+    const desc = s?.description ?? "تفاصيل مساحة التخزين وطريقة الحجز على Spaceify.";
+    return { meta: [
+      { title }, { name: "description", content: desc },
+      { property: "og:title", content: title }, { property: "og:description", content: desc },
+      { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
+    ] };
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          { title: `${loaderData.space.title} - ${loaderData.space.wilaya} | Spaceify` },
-          { name: "description", content: loaderData.space.description },
-          { property: "og:title", content: `${loaderData.space.title} | Spaceify` },
-          { property: "og:description", content: loaderData.space.description },
-        ]
-      : [{ title: "مساحة غير متوفرة | Spaceify" }, { name: "robots", content: "noindex" }],
-  }),
-  component: SpaceDetail,
-  notFoundComponent: () => (
-    <div className="p-20 text-center">
-      <p className="mb-4">هذه المساحة غير متوفرة.</p>
-      <Link to="/spaces" className="font-bold text-accent">العودة للمساحات</Link>
-    </div>
-  ),
+  component: SpaceDetailPage,
 });
+
+function SpaceDetailPage() {
+  const { id } = Route.useParams();
+  const { all, ready } = useAllSpaces();
+  const space = all.find((s) => s.id === id);
+  if (!space) {
+    if (!ready) return <div className="p-20 text-center text-muted-foreground">جارٍ التحميل...</div>;
+    return (
+      <div className="p-20 text-center">
+        <p className="mb-4">هذه المساحة غير متوفرة.</p>
+        <Link to="/spaces" className="font-bold text-accent">العودة إلى المساحات</Link>
+      </div>
+    );
+  }
+  return <SpaceDetail key={space.id} space={space} />;
+}
 
 const fmt = (n: number) => n.toLocaleString("fr-DZ");
 
-function SpaceDetail() {
-  const { space } = Route.useLoaderData();
+function SpaceDetail({ space }: { space: Space }) {
   const [img, setImg] = useState(0);
   const [mode, setMode] = useState<"day" | "month">("day");
   const [qty, setQty] = useState(1);
@@ -45,6 +50,9 @@ function SpaceDetail() {
   const [paid, setPaid] = useState(false);
   const { rent, fee, total } = computeBooking(space, mode, qty);
 
+  const contactPhone = space.phone ?? PLATFORM_WHATSAPP;
+  const waMsg = (booking: boolean) => `مرحباً 👋\n${booking ? "أرغب في حجز المساحة التالية عبر منصة Spaceify:" : "أتواصل معكم بخصوص المساحة التالية على منصة Spaceify:"}\n\n🏢 ${space.title}\n📦 النوع: ${space.type}\n📍 الموقع: ${space.wilaya}${space.region ? " - " + space.region : ""}\n📐 المساحة: ${space.area} م²${booking ? `\n🗓️ المدة: ${qty} ${mode === "day" ? "يوم" : "شهر"}\n💰 الإيجار: ${fmt(rent)} دج\n🧾 رسوم الخدمة: ${fmt(fee)} دج${paid ? " (مدفوعة ✅)" : ""}` : ""}\n\nرقم المساحة: ${space.id}`;
+
   const pay = (e: React.FormEvent) => {
     e.preventDefault();
     setPaying(true);
@@ -53,13 +61,13 @@ function SpaceDetail() {
       setPaid(true);
       setPayOpen(false);
       addNotification("spaces", "تم تأكيد الحجز ✅", `${space.title} - ${space.wilaya}. تم دفع رسوم الخدمة ${fmt(fee)} دج.`);
-      toast.success("تم دفع رسوم الخدمة وتأكيد الحجز!");
+      toast.success("تم دفع رسوم الخدمة وتأكيد الحجز بنجاح");
     }, 1200);
   };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
-      <Link to="/spaces" className="mb-4 inline-flex items-center gap-1 text-sm font-bold text-primary"><ArrowRight className="size-4" />كل المساحات</Link>
+      <Link to="/spaces" className="mb-4 inline-flex items-center gap-1 text-sm font-bold text-primary"><ArrowRight className="size-4" />جميع المساحات</Link>
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
         <div className="min-w-0">
           <div className="overflow-hidden rounded-3xl">
@@ -73,15 +81,18 @@ function SpaceDetail() {
               </button>
             ))}
           </div>
-          <h1 className="mt-6 text-2xl font-black text-primary sm:text-3xl">{space.title}</h1>
+          <div className="mt-6 flex flex-wrap items-center gap-2">
+            <h1 className="text-2xl font-black text-primary sm:text-3xl">{space.title}</h1>
+            <span className={`rounded-full px-3 py-1 text-xs font-bold ${space.status === "review" ? "bg-secondary text-primary" : "bg-eco text-primary-foreground"}`}>{statusLabels[space.status]}</span>
+          </div>
           <div className="mt-2 flex flex-wrap gap-4 text-muted-foreground">
-            <span className="flex items-center gap-1"><MapPin className="size-4 text-accent" />{space.wilaya}</span>
-            <span className="flex items-center gap-1"><Ruler className="size-4 text-accent" />{space.area}م²</span>
+            <span className="flex items-center gap-1"><MapPin className="size-4 text-accent" />{space.wilaya}{space.region ? ` - ${space.region}` : ""}</span>
+            <span className="flex items-center gap-1"><Ruler className="size-4 text-accent" />{space.area} م²</span>
             <span className="flex items-center gap-1"><Star className="size-4 text-accent" />{space.rating}</span>
             <span>المؤجر: {space.owner}</span>
           </div>
           <p className="mt-5 leading-8">{space.description}</p>
-          <h2 className="mt-6 font-black text-primary">المميزات</h2>
+          <h2 className="mt-6 font-black text-primary">التجهيزات والأمان</h2>
           <ul className="mt-3 grid grid-cols-2 gap-2">
             {space.features.map((f) => (
               <li key={f} className="flex items-center gap-2 rounded-xl bg-secondary px-3 py-2 text-sm"><Check className="size-4 text-eco" />{f}</li>
@@ -111,16 +122,26 @@ function SpaceDetail() {
             <div className="flex justify-between"><span>رسوم خدمة Spaceify (10%)</span><span>{fmt(fee)} دج</span></div>
             <div className="flex justify-between border-t pt-2 font-black text-primary"><span>المجموع</span><span>{fmt(total)} دج</span></div>
           </div>
-          {paid ? (
+          {space.status === "review" ? (
+            <div className="mt-5 rounded-xl bg-secondary p-4 text-center text-sm font-bold text-primary">⏳ هذه المساحة قيد المراجعة، وسيتاح حجزها بعد اعتمادها.</div>
+          ) : paid ? (
             <div className="mt-5 rounded-xl bg-eco/10 p-4 text-center font-bold text-eco">✅ تم الدفع وتأكيد الحجز</div>
           ) : (
             <Button variant="brand" className="mt-5 h-12 w-full" onClick={() => setPayOpen(true)}>
-              <Lock />ادفع رسوم الخدمة واحجز
+              <Lock />احجز المساحة
             </Button>
           )}
+          {space.status !== "review" && (
+            <Button asChild variant="brandOutline" className="mt-2 h-11 w-full">
+              <a href={waLink(contactPhone, waMsg(true))} target="_blank" rel="noopener noreferrer">💬 {paid ? "أرسل تفاصيل الحجز عبر واتساب" : "اطلب الحجز عبر واتساب"}</a>
+            </Button>
+          )}
+          <Button asChild variant="ghost" className="mt-1 w-full">
+            <a href={waLink(contactPhone, waMsg(false))} target="_blank" rel="noopener noreferrer">تواصل عبر واتساب</a>
+          </Button>
           <p className="mt-3 flex items-start gap-2 text-xs text-muted-foreground">
             <ShieldCheck className="size-4 shrink-0 text-accent" />
-            لا يتم تأكيد التأجير إلا بعد دفع رسوم الخدمة ({fmt(fee)} دج). يُدفع الإيجار للمؤجر عند استلام المساحة.
+            لا يُؤكَّد الإيجار إلا بعد دفع رسوم الخدمة ({fmt(fee)} دج). ويُدفع مبلغ الإيجار للمؤجر عند استلام المساحة.
           </p>
         </aside>
       </div>
@@ -143,9 +164,9 @@ function SpaceDetail() {
               <input required placeholder="CVV2" className="h-11 rounded-xl border bg-card px-3" dir="ltr" />
             </div>
             <Button type="submit" variant="brand" className="h-12" disabled={paying}>
-              {paying ? "جاري المعالجة..." : `ادفع ${fmt(fee)} دج`}
+              {paying ? "جارٍ المعالجة..." : `ادفع ${fmt(fee)} دج`}
             </Button>
-            <p className="text-center text-xs text-muted-foreground">وضع تجريبي — لن يتم خصم أي مبلغ حقيقي</p>
+            <p className="text-center text-xs text-muted-foreground">وضع تجريبي: لن يُخصم أي مبلغ حقيقي</p>
           </form>
         </DialogContent>
       </Dialog>

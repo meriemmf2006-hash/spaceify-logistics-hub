@@ -20,9 +20,9 @@ function Sel({ label, options }: { label: string; options: string[] }) {
 }
 
 const tabs = [
-  { id: "space", icon: "🏢", label: "تخزين ومساحات" },
+  { id: "space", icon: "🏢", label: "التخزين والمساحات" },
   { id: "truck", icon: "🚛", label: "شحن بين الولايات" },
-  { id: "local", icon: "🛻", label: "نقل محلي ورحول" },
+  { id: "local", icon: "🛻", label: "النقل المحلي" },
 ] as const;
 
 export function SearchBox() {
@@ -40,7 +40,7 @@ export function SearchBox() {
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
         {tab === "space" && (<>
           <Sel label="الولاية" options={wilayas} />
-          <Sel label="نوع المساحة" options={["مستودع", "كراج", "غرفة", "محل"]} />
+          <Sel label="نوع المساحة" options={["مستودع", "غرفة تخزين", "مرآب", "مساحة لوجستية"]} />
           <Sel label="مدة التأجير" options={["يومي", "شهري"]} />
         </>)}
         {tab === "truck" && (<>
@@ -49,7 +49,7 @@ export function SearchBox() {
           <Sel label="نوع البضاعة / الحجم" options={["طرود صغيرة", "منصات (باليت)", "أقل من 2 طن", "2 - 5 طن", "أكثر من 5 طن"]} />
         </>)}
         {tab === "local" && (<>
-          <Sel label="نوع الخدمة" options={["توصيل أثاث / تجهيزات محلات", "رحول منازل", "توصيل سريع"]} />
+          <Sel label="نوع الخدمة" options={["توصيل أثاث / تجهيزات محلات", "نقل أثاث المنازل", "توصيل سريع"]} />
           <label className="block text-xs font-semibold text-muted-foreground sm:col-span-2">
             الموقع
             <div className="relative mt-1">
@@ -58,8 +58,8 @@ export function SearchBox() {
             </div>
           </label>
         </>)}
-        <Button variant="brand" className="h-12 w-full" onClick={() => toast.success("جاري البحث عن أفضل العروض القريبة منك...")}>
-          <Search />ابحث الآن
+        <Button variant="brand" className="h-12 w-full" onClick={() => toast.success("جارٍ البحث عن أفضل العروض القريبة منك...")}>
+          <Search />ابحث
         </Button>
       </div>
     </div>
@@ -79,7 +79,7 @@ export function Hero() {
             <span dir="ltr">Spaceify</span>: المنصة اللوجستية التشاركية <span className="text-accent">الأولى في الجزائر</span>
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-base text-primary-foreground/80 sm:text-lg">
-            نوصل البضائع، نملأ الشاحنات الفارغة، ونستغل المساحات المغلقة لخدمة التجار، المحلات، والأفراد.
+            نربط أصحاب البضائع بالشاحنات العائدة فارغة وبالمساحات غير المستغلة، لنقل وتخزين أسرع وأقل تكلفة للتجار والمحلات والأفراد.
           </p>
         </div>
         <div className="mx-auto mt-10 max-w-5xl"><SearchBox /></div>
@@ -106,9 +106,9 @@ const SectionTitle = ({ kicker, title, desc }: { kicker: string; title: string; 
 
 export function Modules() {
   const items = [
-    { icon: Warehouse, e: "🏢", t: "خبي سلعتك", s: "المساحات الثابتة", d: "كراء واستئجار المستودعات، الكراجات، والمحلات للتخزين المؤقت باليوم أو الشهر.", b: "تصفح المساحات", to: "/spaces" as const },
-    { icon: Truck, e: "🚛", t: "رجعة عامرة", s: "الرحلات الفارغة بين الولايات", d: "استغل رحلات العودة للشاحنات الكبرى لنقل بضائعك بأقل تكلفة وتقليل انبعاثات الكربون.", b: "استكشف الشاحنات العائدة", to: "/trucks" as const },
-    { icon: Package, e: "🛻", t: "نقل وتوصيل", s: "الهاربين & Master", d: "خدمة التوصيل الفوري لأصحاب محلات الأثاث والتجهيزات ورحول الأفراد بأسعار شفافة.", b: "اطلب مركب نقل", to: "/local" as const },
+    { icon: Warehouse, e: "🏢", t: "خزّن بضائعك", s: "المساحات الثابتة", d: "استئجار المستودعات والمرائب وغرف التخزين للتخزين المؤقت، يومياً أو شهرياً.", b: "استعرض المساحات المتاحة", to: "/spaces" as const },
+    { icon: Truck, e: "🚛", t: "رحلات العودة", s: "الرحلات الفارغة بين الولايات", d: "انقل بضائعك على متن الشاحنات العائدة بين الولايات بتكلفة أقل وانبعاثات كربونية أدنى.", b: "استعرض الشاحنات العائدة", to: "/trucks" as const },
+    { icon: Package, e: "🛻", t: "نقل وتوصيل", s: "شاحنات خفيفة ومركبات نفعية", d: "توصيل فوري لمحلات الأثاث والتجهيزات، ونقل أثاث المنازل للأفراد بأسعار واضحة.", b: "اطلب مركبة نقل", to: "/local" as const },
   ];
   return (
     <section className="mx-auto max-w-7xl px-4 py-20">
@@ -138,8 +138,8 @@ export function B2B() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      toast.success("🔔 إشعار Web Push: تم إرسال طلبك لأقرب 5 سائقين", { description: "سيتم الرد خلال دقائق" });
-      setTimeout(() => toast("📩 SMS: سائق Master على بعد 2.3 كم قبل طلبك — الوصول خلال 15 دقيقة"), 1400);
+      toast.success("تم إرسال طلبك بنجاح إلى أقرب 5 سائقين", { description: "ستتلقى رداً خلال دقائق" });
+      setTimeout(() => toast("قَبِل سائق طلبك وهو على بعد 2.3 كم، الوصول المتوقع خلال 15 دقيقة"), 1400);
     }, 900);
   };
   return (
@@ -148,7 +148,7 @@ export function B2B() {
         <div>
           <span className="glass-dark rounded-full px-3 py-1 text-sm font-bold">بوابة محلات الأثاث والتجهيزات</span>
           <h2 className="mt-4 text-2xl font-black sm:text-4xl">خدمة التوصيل المباشر للمحلات التجارية <span dir="ltr" className="text-accent">(B2B2C)</span></h2>
-          <p className="mt-4 text-primary-foreground/80">ربط فوري بين محلات الأثاث، الأجهزة الكهرومنزلية، ومواد البناء مع أسطول الهاربين وMaster لتوصيل مشتريات الزبائن فوراً.</p>
+          <p className="mt-4 text-primary-foreground/80">نربط محلات الأثاث والأجهزة الكهرومنزلية ومواد البناء بأسطول من المركبات النفعية لتوصيل مشتريات الزبائن في الحال.</p>
           <ul className="mt-6 space-y-2 text-sm">
             {["تتبع مباشر للسائق", "تسعيرة شفافة قبل التأكيد", "فاتورة شهرية للمحلات الشريكة"].map((x) => (
               <li key={x} className="flex items-center gap-2"><Star className="size-4 text-accent" />{x}</li>
@@ -158,13 +158,13 @@ export function B2B() {
         <form onSubmit={submit} className="glass rounded-3xl p-6 text-foreground">
           <h3 className="mb-4 text-lg font-black text-primary">طلب توصيل سريع</h3>
           <div className="grid gap-3">
-            <input required className={field} placeholder="اسم المحل ورقم الزبون" />
+            <input required className={field} placeholder="اسم المحل ورقم هاتف الزبون" />
             <input required className={field} placeholder="عنوان التوصيل" />
             <select className={field}>
-              {["الهاربين DFSK", "N300", "Master", "Partner"].map((v) => <option key={v}>{v}</option>)}
+              {["شاحنة خفيفة DFSK", "N300", "Master", "Partner"].map((v) => <option key={v}>{v}</option>)}
             </select>
             <Button type="submit" variant="brand" className="h-12" disabled={loading}>
-              <Send />{loading ? "جاري الإرسال..." : "طلب سائق توصيل فوري"}
+              <Send />{loading ? "جارٍ الإرسال..." : "اطلب سائق توصيل"}
             </Button>
           </div>
         </form>
@@ -176,15 +176,15 @@ export function B2B() {
 const listings = {
   space: [
     { t: "مستودع 120م² مغطى وآمن - الجلفة", p: "1500 دج/اليوم", tag: "مساحة", icon: Warehouse },
-    { t: "كراج 40م² للتخزين - سطيف", p: "18000 دج/الشهر", tag: "مساحة", icon: Warehouse },
+    { t: "مرآب 40م² للتخزين - سطيف", p: "18000 دج/الشهر", tag: "مساحة", icon: Warehouse },
   ],
   truck: [
     { t: "شاحنة 10 طن عائدة من باتنة ⬅️ وهران (متبقي 4 طن)", p: "تخفيض 40%", tag: "رحلة فارغة", icon: Truck },
     { t: "شاحنة 20 طن عائدة من ورقلة ⬅️ الجزائر (فارغة كلياً)", p: "تخفيض 50%", tag: "رحلة فارغة", icon: Truck },
   ],
   local: [
-    { t: "سيارة Master جاهزة لنقل الأثاث والرحول - الجزائر العاصمة", p: "متاح الآن", tag: "نقل محلي", icon: Package },
-    { t: "هاربين DFSK للتوصيل السريع - وهران", p: "من 1200 دج", tag: "نقل محلي", icon: Package },
+    { t: "مركبة Master جاهزة لنقل الأثاث - الجزائر العاصمة", p: "متاح الآن", tag: "نقل محلي", icon: Package },
+    { t: "شاحنة خفيفة DFSK للتوصيل السريع - وهران", p: "من 1200 دج", tag: "نقل محلي", icon: Package },
   ],
 };
 
@@ -193,7 +193,7 @@ export function Listings({ only }: { only?: keyof typeof listings }) {
   const labels = { space: "🏢 المساحات", truck: "🚛 الشاحنات", local: "🛻 النقل المحلي" };
   return (
     <section className="mx-auto max-w-7xl px-4 py-20">
-      <SectionTitle kicker="مباشر الآن" title="نماذج العروض المباشرة" />
+      <SectionTitle kicker="مباشر الآن" title="أحدث العروض المتاحة" />
       {!only && (
         <div className="mb-8 flex justify-center gap-2 overflow-x-auto">
           {(Object.keys(labels) as (keyof typeof listings)[]).map((k) => (
@@ -216,7 +216,7 @@ export function Listings({ only }: { only?: keyof typeof listings }) {
               <h3 className="mt-1 font-bold">{l.t}</h3>
               <p className="mt-1 font-black text-accent">{l.p}</p>
             </div>
-            <Button variant="accent" size="sm" onClick={() => toast.success("تم إرسال طلب الحجز لصاحب العرض")}>احجز</Button>
+            <Button variant="accent" size="sm" onClick={() => toast.success("تم إرسال طلبك بنجاح إلى صاحب العرض")}>احجز الآن</Button>
           </div>
         ))}
       </div>
@@ -230,8 +230,8 @@ export function TechAndBadges() {
       <SectionTitle kicker="التقنية والاستدامة" title="ذكية، خفيفة، وصديقة للبيئة" />
       <div className="grid gap-5 md:grid-cols-2">
         {[
-          { i: Bell, t: "🔔 إشعارات فورية متقدمة", d: "إشعارات فورية متقدمة (Web Push & SMS & WhatsApp) لتنبيه السائقين والمؤجرين فور توفر طلب قريب." },
-          { i: Smartphone, t: "📱 تطبيق ويب خفيف (PWA)", d: "تطبيق ويب خفيف (PWA) يعمل مباشرة على المتصفح دون الحاجة لتحميل تطبيقات ثقيلة. أضفه للشاشة الرئيسية بنقرة." },
+          { i: Bell, t: "🔔 إشعارات فورية متقدمة", d: "تنبيهات فورية عبر المتصفح والرسائل النصية وواتساب، تُعلم السائقين والمؤجرين بكل طلب قريب منهم." },
+          { i: Smartphone, t: "📱 تطبيق ويب خفيف (PWA)", d: "يعمل مباشرة من المتصفح دون الحاجة إلى تنزيل تطبيق، ويمكنك إضافته إلى الشاشة الرئيسية بنقرة واحدة." },
         ].map((c) => (
           <div key={c.t} className="glass flex gap-4 rounded-3xl p-6">
             <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-secondary text-primary"><c.i /></div>

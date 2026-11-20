@@ -14,7 +14,7 @@ const KEY = "spaceify-notifications";
 const now = Date.now();
 const seed: Notif[] = [
   { id: "s1", category: "spaces", title: "مساحة جديدة قريبة منك", body: "مستودع 120م² متاح الآن في الجلفة بـ 1500 دج/اليوم.", time: now - 6e5, read: false },
-  { id: "s2", category: "spaces", title: "تذكير بانتهاء الكراء", body: "ينتهي كراء الكراج في سطيف بعد 3 أيام.", time: now - 864e5, read: true },
+  { id: "s2", category: "spaces", title: "تذكير بانتهاء الإيجار", body: "ينتهي إيجار المرآب في سطيف بعد 3 أيام.", time: now - 864e5, read: true },
   { id: "t1", category: "trucks", title: "شاحنة عائدة على مسارك", body: "شاحنة 10 طن باتنة ⬅️ وهران، متبقي 4 طن بتخفيض 40%.", time: now - 18e5, read: false },
   { id: "t2", category: "trucks", title: "عرض سعر جديد", body: "السائق محمد أرسل لك عرضاً بـ 22000 دج.", time: now - 72e5, read: false },
   { id: "l1", category: "local", title: "سائق Master متاح", body: "سيارة Master على بعد 1.8 كم في الجزائر العاصمة.", time: now - 9e5, read: false },

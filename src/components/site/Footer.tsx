@@ -27,7 +27,7 @@ export function Footer() {
         <div>
           <h4 className="mb-4 font-bold">تواصل معنا</h4>
           <ul className="space-y-3 text-sm text-primary-foreground/70">
-            <li className="flex items-center gap-2"><Phone className="size-4 text-accent" /><span dir="ltr">+213 555 00 00 00</span></li>
+            <li className="flex items-center gap-2"><Phone className="size-4 text-accent" /><span dir="ltr">+213 667 21 92 55</span></li>
             <li className="flex items-center gap-2"><Mail className="size-4 text-accent" />contact@spaceify.dz</li>
             <li className="flex items-center gap-2"><MapPin className="size-4 text-accent" />الجزائر العاصمة، الجزائر</li>
           </ul>

@@ -9,7 +9,7 @@ export const navLinks = [
   { to: "/", label: "الرئيسية" },
   { to: "/spaces", label: "المساحات والتخزين" },
   { to: "/trucks", label: "الرحلات الفارغة" },
-  { to: "/local", label: "النقل المحلي والرحول" },
+  { to: "/local", label: "النقل المحلي ونقل الأثاث" },
   { to: "/partners", label: "المحلات والشركاء" },
 ] as const;
 
@@ -59,7 +59,7 @@ export function Header() {
         </nav>
         <div className="hidden items-center gap-2 lg:flex">
           <BellLink />
-          <Button variant="brandOutline" size="sm"><Plus />إضافة عرض (مساحة / مركبة)</Button>
+          <Button asChild variant="brandOutline" size="sm"><Link to="/spaces/new"><Plus />أضف مساحتك</Link></Button>
           <Button variant="accent" size="sm">تسجيل الدخول</Button>
         </div>
         <div className="flex items-center gap-1 lg:hidden"><BellLink />
@@ -77,7 +77,7 @@ export function Header() {
             ))}
           </nav>
           <div className="grid gap-2">
-            <Button variant="brandOutline"><Plus />إضافة عرض (مساحة / مركبة)</Button>
+            <Button asChild variant="brandOutline"><Link to="/spaces/new" onClick={() => setOpen(false)}><Plus />أضف مساحتك</Link></Button>
             <Button variant="accent">تسجيل الدخول</Button>
           </div>
         </div>

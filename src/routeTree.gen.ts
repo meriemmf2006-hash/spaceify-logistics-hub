@@ -16,6 +16,7 @@ import { Route as PartnersRouteImport } from './routes/partners'
 import { Route as TrucksRouteImport } from './routes/trucks'
 import { Route as SpacesIndexRouteImport } from './routes/spaces.index'
 import { Route as SpacesIdRouteImport } from './routes/spaces.$id'
+import { Route as SpacesNewRouteImport } from './routes/spaces.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -52,6 +53,11 @@ const SpacesIdRoute = SpacesIdRouteImport.update({
   path: '/spaces/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SpacesNewRoute = SpacesNewRouteImport.update({
+  id: '/spaces/new',
+  path: '/spaces/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/partners': typeof PartnersRoute
   '/trucks': typeof TrucksRoute
   '/spaces/$id': typeof SpacesIdRoute
+  '/spaces/new': typeof SpacesNewRoute
   '/spaces/': typeof SpacesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/partners': typeof PartnersRoute
   '/trucks': typeof TrucksRoute
   '/spaces/$id': typeof SpacesIdRoute
+  '/spaces/new': typeof SpacesNewRoute
   '/spaces': typeof SpacesIndexRoute
 }
 export interface FileRoutesById {
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/partners': typeof PartnersRoute
   '/trucks': typeof TrucksRoute
   '/spaces/$id': typeof SpacesIdRoute
+  '/spaces/new': typeof SpacesNewRoute
   '/spaces/': typeof SpacesIndexRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/partners'
     | '/trucks'
     | '/spaces/$id'
+    | '/spaces/new'
     | '/spaces/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/partners'
     | '/trucks'
     | '/spaces/$id'
+    | '/spaces/new'
     | '/spaces'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/partners'
     | '/trucks'
     | '/spaces/$id'
+    | '/spaces/new'
     | '/spaces/'
   fileRoutesById: FileRoutesById
 }
@@ -118,6 +130,7 @@ export interface RootRouteChildren {
   PartnersRoute: typeof PartnersRoute
   TrucksRoute: typeof TrucksRoute
   SpacesIdRoute: typeof SpacesIdRoute
+  SpacesNewRoute: typeof SpacesNewRoute
   SpacesIndexRoute: typeof SpacesIndexRoute
 }
 
@@ -172,6 +185,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SpacesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/spaces/new': {
+      id: '/spaces/new'
+      path: '/spaces/new'
+      fullPath: '/spaces/new'
+      preLoaderRoute: typeof SpacesNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -182,6 +202,7 @@ const rootRouteChildren: RootRouteChildren = {
   PartnersRoute: PartnersRoute,
   TrucksRoute: TrucksRoute,
   SpacesIdRoute: SpacesIdRoute,
+  SpacesNewRoute: SpacesNewRoute,
   SpacesIndexRoute: SpacesIndexRoute,
 }
 export const routeTree = rootRouteImport
