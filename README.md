@@ -42,8 +42,7 @@ Create a modern, ultra-responsive Progressive Web App (PWA) in Arabic (RTL suppo
 
   - النقل المحلي والرحول (Local Delivery)
 
-  - المحلات والشركاء (B2B Partners)
-
+  
 - CTAs: 
 
   - button [Outline]: "إضافة عرض (مساحة / مركبة)"
@@ -66,7 +65,7 @@ Create a modern, ultra-responsive Progressive Web App (PWA) in Arabic (RTL suppo
 
   - Tab 🚛 [شحن بين الولايات - رحلات فارغة]: Inputs for (ولاية الانطلاق ➡️ ولاية الوصول، نوع البضاعة/الحجم).
 
-  - Tab 🛻 [نقل محلي ورحول]: Options for (توصيل أثاث/تجهيزات محلات، رحول منازل، توصيل سريع) + Location input.
+  - Tab 🛻 [نقل محلي و ترحيل]: Options for (توصيل أثاث/تجهيزات محلات، ترحيل منازل، توصيل سريع) + Location input.
 
   - Search Button: "ابحث الآن" with magnifying glass icon.
 
