@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Hero, Modules, B2B, Listings, TechAndBadges } from "@/components/site/Sections";
+import { Hero, Modules, Listings, TechAndBadges } from "@/components/site/Sections";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -10,5 +10,5 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "نوصل البضائع، نملأ الشاحنات الفارغة، ونستغل المساحات المغلقة في الجزائر." },
     ],
   }),
-  component: () => (<><Hero /><Modules /><B2B /><Listings /><TechAndBadges /></>),
+  component: () => (<><Hero /><Modules /><Listings /><TechAndBadges /></>),
 });

@@ -12,8 +12,6 @@ import {
   Leaf,
   MapPin,
   ArrowLeft,
-  Send,
-  Star,
   Plus,
   X,
   MessageCircle,
@@ -27,25 +25,77 @@ function buildWhatsAppUrl(message: string) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
-const wilayas = [
-  "الجزائر العاصمة",
-  "وهران",
-  "قسنطينة",
+export const wilayas = [
+  "أدرار",
+  "الشلف",
+  "الأغواط",
+  "أم البواقي",
   "باتنة",
-  "الجلفة",
-  "سطيف",
-  "عنابة",
-  "البليدة",
-  "تلمسان",
-  "ورقلة",
-  "بسكرة",
   "بجاية",
-];
+  "بسكرة",
+  "بشار",
+  "البليدة",
+  "البويرة",
+  "تمنراست",
+  "تبسة",
+  "تلمسان",
+  "تيارت",
+  "تيزي وزو",
+  "الجزائر العاصمة",
+  "الجلفة",
+  "جيجل",
+  "سطيف",
+  "سعيدة",
+  "سكيكدة",
+  "سيدي بلعباس",
+  "عنابة",
+  "قالمة",
+  "قسنطينة",
+  "المدية",
+  "مستغانم",
+  "المسيلة",
+  "معسكر",
+  "ورقلة",
+  "وهران",
+  "البيض",
+  "إليزي",
+  "برج بوعريريج",
+  "بومرداس",
+  "الطارف",
+  "تندوف",
+  "تيسمسيلت",
+  "الوادي",
+  "خنشلة",
+  "سوق أهراس",
+  "تيبازة",
+  "ميلة",
+  "عين الدفلى",
+  "النعامة",
+  "عين تموشنت",
+  "غرداية",
+  "غليزان",
+  "تيميمون",
+  "برج باجي مختار",
+  "أولاد جلال",
+  "بني عباس",
+  "إن صالح",
+  "إن قزام",
+  "تقرت",
+  "جانت",
+  "المغير",
+  "المنيعة",
+] as const;
 
 const field =
   "h-12 w-full rounded-xl border bg-card px-3 text-sm outline-none focus:ring-2 focus:ring-ring";
 
-function Sel({ label, options }: { label: string; options: string[] }) {
+function Sel({
+  label,
+  options,
+}: {
+  label: string;
+  options: readonly string[];
+}) {
   return (
     <label className="block text-xs font-semibold text-muted-foreground">
       {label}
@@ -119,6 +169,8 @@ export function SearchBox() {
               options={[
                 "توصيل أثاث وتجهيزات محلات",
                 "نقل أثاث المنازل",
+                "مواد بناء",
+                "سلع من نوع خاص",
                 "توصيل سريع",
               ]}
             />
@@ -232,7 +284,7 @@ export function Modules() {
       e: "🛻",
       t: "نقل وتوصيل",
       s: "شاحنات خفيفة ومركبات نفعية",
-      d: "توصيل مباشر لمحلات الأثاث والتجهيزات، ونقل أثاث المنازل للأفراد بأسعار واضحة.",
+      d: "نقل محلي لمختلف السلع، مواد البناء، السلع الخاصة، وتوصيل المحلات والأفراد بأسعار واضحة.",
       b: "اطلب مركبة نقل",
       to: "/local" as const,
     },
@@ -263,123 +315,6 @@ export function Modules() {
             </Button>
           </div>
         ))}
-      </div>
-    </section>
-  );
-}
-
-export function B2B() {
-  const [loading, setLoading] = useState(false);
-  const [shopInfo, setShopInfo] = useState("");
-  const [address, setAddress] = useState("");
-  const [vehicle, setVehicle] = useState("شاحنة خفيفة DFSK");
-
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      toast.success("تم إرسال طلبك بنجاح إلى أقرب خمسة سائقين", {
-        description: "ستتلقى رداً خلال دقائق معدودة",
-      });
-      setTimeout(
-        () =>
-          toast(
-            "قبل سائق طلبك وهو على بعد 2.3 كم، والوصول المتوقع خلال 15 دقيقة"
-          ),
-        1400
-      );
-    }, 900);
-  };
-
-  const sendViaWhatsApp = () => {
-    const text = `مرحباً منصة Spaceify، أرغب في طلب توصيل سريع:\n- المحل والهاتف: ${
-      shopInfo || "غير محدد"
-    }\n- عنوان التوصيل: ${address || "غير محدد"}\n- نوع المركبة: ${vehicle}`;
-    window.open(buildWhatsAppUrl(text), "_blank", "noopener,noreferrer");
-  };
-
-  return (
-    <section className="bg-hero py-20 text-primary-foreground">
-      <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 lg:grid-cols-2">
-        <div>
-          <span className="glass-dark rounded-full px-3 py-1 text-sm font-bold">
-            بوابة محلات الأثاث والتجهيزات
-          </span>
-          <h2 className="mt-4 text-2xl font-black sm:text-4xl">
-            خدمة التوصيل المباشر للمحلات التجارية{" "}
-            <span dir="ltr" className="text-accent">
-              (B2B2C)
-            </span>
-          </h2>
-          <p className="mt-4 text-primary-foreground/80">
-            نربط محلات الأثاث والأجهزة الكهرومنزلية ومواد البناء بأسطول من
-            المركبات النفعية لتوصيل مشتريات الزبائن بسرعة وموثوقية.
-          </p>
-          <ul className="mt-6 space-y-2 text-sm">
-            {[
-              "تتبع مباشر لحالة التوصيل",
-              "تسعيرة واضحة قبل التأكيد",
-              "فوترة شهرية منظمة للمحلات الشريكة",
-            ].map((x) => (
-              <li key={x} className="flex items-center gap-2">
-                <Star className="size-4 text-accent" />
-                {x}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <form
-          onSubmit={submit}
-          className="glass rounded-3xl p-6 text-foreground"
-        >
-          <h3 className="mb-4 text-lg font-black text-primary">
-            طلب توصيل سريع
-          </h3>
-          <div className="grid gap-3">
-            <input
-              required
-              value={shopInfo}
-              onChange={(e) => setShopInfo(e.target.value)}
-              className={field}
-              placeholder="اسم المحل ورقم هاتف الزبون"
-            />
-            <input
-              required
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              className={field}
-              placeholder="عنوان التوصيل"
-            />
-            <select
-              value={vehicle}
-              onChange={(e) => setVehicle(e.target.value)}
-              className={field}
-            >
-              {["شاحنة خفيفة DFSK", "N300", "Master", "Partner"].map((v) => (
-                <option key={v}>{v}</option>
-              ))}
-            </select>
-            <Button
-              type="submit"
-              variant="brand"
-              className="h-12"
-              disabled={loading}
-            >
-              <Send />
-              {loading ? "جارٍ الإرسال..." : "اطلب سائق توصيل"}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              className="h-11 gap-2"
-              onClick={sendViaWhatsApp}
-            >
-              <MessageCircle className="size-4" />
-              إرسال تفاصيل الطلب عبر واتساب
-            </Button>
-          </div>
-        </form>
       </div>
     </section>
   );
@@ -449,9 +384,8 @@ export function Listings({ only }: { only?: "space" | "truck" | "local" }) {
   const [itemsByTab, setItemsByTab] = useState(initialListings);
   const [showAddModal, setShowAddModal] = useState(false);
 
-  // حقول نموذج إضافة عرض أو مساحة جديدة
   const [title, setTitle] = useState("");
-  const [wilaya, setWilaya] = useState(wilayas[0]);
+  const [wilaya, setWilaya] = useState<string>(wilayas[0]);
   const [price, setPrice] = useState("");
 
   const labels = {
@@ -567,9 +501,8 @@ export function Listings({ only }: { only?: "space" | "truck" | "local" }) {
                 />
               </label>
 
-              <Sel label="الولاية" options={wilayas} />
               <label className="block text-xs font-semibold text-muted-foreground">
-                اختر الولاية للتأكيد
+                الولاية
                 <select
                   value={wilaya}
                   onChange={(e) => setWilaya(e.target.value)}

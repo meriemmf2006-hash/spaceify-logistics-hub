@@ -15,9 +15,8 @@ function buildWhatsAppUrl(message: string) {
 export const navLinks = [
   { to: "/", label: "الرئيسية" },
   { to: "/spaces", label: "المساحات والتخزين" },
-  { to: "/trucks", label: "الرحلات الفارغة" },
-  { to: "/local", label: "النقل المحلي ونقل الأثاث" },
-  { to: "/partners", label: "المحلات والشركاء" },
+  { to: "/trucks", label: " النقل بين الولايات والرحلات الفارغة" },
+  { to: "/local", label: "النقل المحلي ونقل البضائع" },
 ] as const;
 
 export function Logo() {
